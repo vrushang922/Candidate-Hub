@@ -15,8 +15,25 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+from user.auth.views.login import RefreshTokenView
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("api-auth/", include("user.urls")),
+    path("api-profile/", include("profile.urls")),
+    path('jwt/refresh-token', RefreshTokenView.as_view(), name='token_refresh'),
+    path("api-auth/default", include("rest_framework.urls"))
 ]
+
+if settings.DEBUG:
+    
+    urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
+    
